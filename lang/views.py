@@ -1,19 +1,65 @@
 """Views language identifier."""
 
 from django.contrib import messages
-from django.contrib.auth import logout, login
+from django.contrib.auth import (
+    logout,
+    login,
+)
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from .forms import UserLoginForm, UserRegisterForm
+from django.shortcuts import (
+    render,
+    redirect,
+)
+from django.views import View
+from django.views.generic import (
+    TemplateView,
+    DetailView,
+    DeleteView,
+)
+
+from .forms import (
+    UserLoginForm,
+    UserRegisterForm,
+)
 from .messanges import Message
+from .models import Translate
 
 from .structures import language
-from .utils import create_translate_object, get_translate_text
+from .utils import (
+    create_translate_object,
+    get_translate_text,
+)
 
 
-def index(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
-    """Language identifier."""
+class TranslatesView(View):
+    """Получение всех переводов пользователя."""
+
+    def get(self, request):
+        """Получить переводы."""
+        translates = Translate.objects.filter(author=request.user).select_related('author')
+        context = {}
+        context['translates'] = translates
+        return render(request, 'lang/translates.html', context=context)
+
+
+class TranslateView(DetailView):
+    """Перевод пользователя."""
+
+    model = Translate
+    context_object_name = 'translate_item'
+
+
+class DeleteTranslateView(DeleteView):
+    """Удаление перевода."""
+
+    model = Translate
+    template_name = 'lang/translate_delete.html'
+    success_url = '/translates/'
+
+
+def translate_text(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
+    """Перевод текста."""
     if request.user.is_authenticated:
         if request.method == 'POST':
             request_data = request.POST
@@ -21,18 +67,18 @@ def index(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
             text_for_translate = request_data['text_for_translate']
             language_to = request_data['languages']
 
-            translated_text, translate_from, translate_to = get_translate_text(language_to, text_for_translate)
+            translated_text, language_input, language_output = get_translate_text(language_to, text_for_translate)
 
             translate_object = create_translate_object(
                 text_for_translate,
-                translate_from,
+                language_input,
                 translated_text,
-                translate_to,
+                language_output,
                 request,
             )
 
-            language_input = language.language.get(translate_from)
-            language_output = language.language.get(translate_to)
+            language_input = language.language.get(language_input)
+            language_output = language.language.get(language_output)
             translate_data_to_render = {
                 'language_input': language_input,
                 'text_for_translate': text_for_translate,
@@ -48,7 +94,7 @@ def index(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
 
 
 def register(request):
-    """Register a new user."""
+    """Регистрация."""
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -64,7 +110,7 @@ def register(request):
 
 
 def user_login(request):
-    """Login of service users."""
+    """Авторизация."""
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -77,6 +123,6 @@ def user_login(request):
 
 
 def user_logout(request):
-    """Logs out user."""
+    """Разлогирование."""
     logout(request)
     return redirect('login')

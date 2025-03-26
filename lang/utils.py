@@ -24,22 +24,26 @@ def get_translate_text(language_to: str, text_for_translate: str) -> tuple[str, 
 
 def create_translate_object(
     text_for_translate: str,
-    translate_from: str,
+    language_input: str,
     translated_text: str,
-    translate_to: str,
+    language_output: str,
     request: WSGIRequest,
 ) -> Translate:
     """Create translated object."""
     translate_object: Translate = Translate.objects.create()
 
     translate_object.author = request.user
-    object_name = save_title_name(translate_object)
+    title = get_title_name(text_for_translate)
+    translate_object.title = title
 
-    save_track(text_for_translate, translate_from, translate_object, object_name, 'file_one')
-    save_track(translated_text, translate_to, translate_object, object_name, 'file_two')
+    save_track(text_for_translate, language_input, translate_object, 'file_one')
+    save_track(translated_text, language_output, translate_object, 'file_two')
 
     translate_object.translate_from_text = text_for_translate
     translate_object.translated_text = translated_text
+
+    translate_object.language_input = language_input
+    translate_object.language_output = language_output
 
     translate_object.save()
 
@@ -48,24 +52,22 @@ def create_translate_object(
 
 def save_track(
     text_to_record: str,
-    language_record: str,
+    language: str,
     translate_object: Translate,
-    object_name: str,
     file_number: str,
 ) -> None:  # noqa: E501
     """Save track of the translated object."""
-    file_1 = record_track(text_to_record=text_to_record, language_record=language_record)
+    track = record_track(text_to_record=text_to_record, language_record=language)
     getattr(translate_object, file_number).save(
-        name=''.join((object_name, '_1')),
-        content=ContentFile(file_1.getvalue()),
+        name=file_number,
+        content=ContentFile(track.getvalue()),
         save=False,
     )
 
 
-def save_title_name(translate_object: Translate) -> str:
-    """Save title name of the translated object."""
-    object_name = ''.join(('track', '-', str(translate_object.pk)))
-    return translate_object.title
+def get_title_name(text_for_translate: str) -> str:
+    """Получение названия перевода."""
+    return ''.join((text_for_translate[:40], '...')) if len(text_for_translate) > 40 else text_for_translate
 
 
 def record_track(text_to_record: str, language_record: str) -> BytesIO:

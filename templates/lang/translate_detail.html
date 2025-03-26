@@ -1,0 +1,19 @@
+{% extends 'lang/base.html' %}
+{% block content %}
+    <div class="container py-1">    
+        <div class="row align-items-md-stretch">
+              <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                  Текс оригинал: <p class="card-text">{{ translate_item.translate_from_text}}</p>
+                  Язык - оригинал: <p class="card-text">{{ translate_item.language_input}}</p>  
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                  Перевод: <p class="card-text">{{ translate_item.translated_text}}</p>
+                  Язык - перевода:<p class="card-text">{{ translate_item.language_output}}</p>    
+                </div>
+              </div>
+        </div>    
+    </div>
+{% endblock %}

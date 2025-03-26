@@ -25,8 +25,9 @@
                         <a class="btn btn-outline-primary"
                            href="https://github.com/Vladimir-82/">MY GIT HUB</a>
                     </div>
-                    <span class="navbar-text" class="login" style="margin-left: 650px">
+                    <span class="navbar-text" class="login" style="margin-left: 500px">
                         {% if request.user.is_authenticated %}
+                            <a href="{% url 'translates' %}"> Личный кабинет </a>
                             Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Exit</a>
                         {% else %}
                             <a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a>

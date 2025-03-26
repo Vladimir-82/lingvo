@@ -1,0 +1,10 @@
+{% extends 'lang/base.html' %}
+{% block content %}
+    <div class="container py-1">    
+        <form method="post">
+        {% csrf_token %}
+        <p>Вы действительно хотите удалить этот перевод?"{{ object }}"?</p>
+        <input type="submit" class="btn btn-danger" value="Удалить">
+        </form>
+    </div>
+{% endblock %}
