@@ -8,6 +8,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 Django = "^5.1.7"
+dotenv = "^0.9.9"
+googletrans = "4.0.0rc1"
+gTTS = "2.5.2"
 
 
 [build-system]

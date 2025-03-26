@@ -1,0 +1,13 @@
+.git {
+    margin: 20px;
+}
+
+.inner {
+  display: table;
+  margin: 0 auto;
+}
+
+
+.answer {
+  text-align: center;
+}
