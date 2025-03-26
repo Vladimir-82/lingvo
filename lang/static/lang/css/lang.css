@@ -7,7 +7,10 @@
   margin: 0 auto;
 }
 
-
 .answer {
   text-align: center;
+}
+
+log {
+    margin-left: 200px;
 }

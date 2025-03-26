@@ -3,6 +3,7 @@
 from io import BytesIO
 
 from django.core.files.base import ContentFile
+from django.core.handlers.wsgi import WSGIRequest
 from googletrans import Translator
 from gtts import gTTS
 
@@ -26,9 +27,12 @@ def create_translate_object(
     translate_from: str,
     translated_text: str,
     translate_to: str,
+    request: WSGIRequest,
 ) -> Translate:
     """Create translated object."""
     translate_object: Translate = Translate.objects.create()
+
+    translate_object.author = request.user
     object_name = save_title_name(translate_object)
 
     save_track(text_for_translate, translate_from, translate_object, object_name, 'file_one')

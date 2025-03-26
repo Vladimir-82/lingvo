@@ -24,15 +24,14 @@
                            href="https://www.codewars.com/users/Vladimir-82/">Code Wars</a>
                         <a class="btn btn-outline-primary"
                            href="https://github.com/Vladimir-82/">MY GIT HUB</a>
-
-                        <span class="navbar-text" class="nav">
-                            {% if request.user.is_authenticated %}
-                                Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Exit</a>
-                            {% else %}
-                                <a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a>
-                            {% endif %}
-                        </span>
                     </div>
+                    <span class="navbar-text" class="login" style="margin-left: 650px">
+                        {% if request.user.is_authenticated %}
+                            Welcome, {{ user.username }} | <a href="{% url 'logout' %}">Exit</a>
+                        {% else %}
+                            <a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a>
+                        {% endif %}
+                    </span>
               </nav>
         </div>
     <div id="content">

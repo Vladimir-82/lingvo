@@ -1,0 +1,55 @@
+{% extends 'lang/base.html' %}
+{% block content %}
+    {% if message %}
+        <div class="inner">
+            {{ message }}
+        </div>
+    {% else %}
+        <div class="inner">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="main_buttons">
+                    <textarea required placeholder="Supports Polish, German, Ukrainian, Russian, French, English" rows="8" cols="80" name="text_for_translate" id="text_for_translate">{{ text_for_translate }}</textarea><br>
+                    <button type="submit" id='submit' class="btn btn-primary" style="float: left; margin-top: 5%">Send</button>
+                    <button type="reset" id="reset" class="btn btn-danger" style="float: right; margin-top: 5%">Clear</button>
+                </div></br></br>
+                <div class="inner">
+                    Translate to: <input type="text" placeholder="select a language"
+                                         name="languages" list="languages" class="custom-select">
+                    <datalist id="languages">
+                      <option value="English">
+                      <option value="Deutsch">
+                      <option value="Français">
+                      <option value="Русский">
+                      <option value="Українська">
+                      <option value="Polski">
+                    </datalist>
+                </div></br>
+            </form>
+        </div>
+        {% if language_input %}
+            <div class="inner">
+                <h3 style="color: darkblue">Input language: {{ language_input }}</h3>
+            </div>
+            <div class="inner">
+                <audio id="myTune" src="{{ translate_object.file_one.url }}"></audio>
+                <button type="button" id="play" onclick="return false" class="btn btn-outline-success">Play</button>
+                <button type="button" id="pause" style="display:none"
+                        onclick="return false" class="btn btn-outline-success">Pause</button>
+            </div></br></br>
+            <div class="inner">
+                <textarea required placeholder="Translation" rows="8" cols="80" name="translate"
+                          id="translate">{{ translated_text }}</textarea>
+            </div>
+            <div class="inner">
+                <h3 style="color: darkblue">Output language: {{ language_output }}</h3>
+            </div>
+            <div class="inner">
+                <audio id="myTunetrans" src="{{ translate_object.file_two.url }}"></audio>
+                <button type="button" id="playtrans" onclick="return false" class="btn btn-outline-success">Play</button>
+                <button type="button" id="pausetrans" style="display:none"
+                        onclick="return false" class="btn btn-outline-success">Pause</button>
+            </div></br>
+        {% endif %}
+    {% endif %}
+{% endblock %}

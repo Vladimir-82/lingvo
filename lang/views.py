@@ -1,9 +1,12 @@
 """Views language identifier."""
 
+from django.contrib import messages
+from django.contrib.auth import logout, login
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import UserLoginForm, UserRegisterForm
+from .messanges import Message
 
 from .structures import language
 from .utils import create_translate_object, get_translate_text
@@ -11,34 +14,41 @@ from .utils import create_translate_object, get_translate_text
 
 def index(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
     """Language identifier."""
-    if request.method == 'POST':
-        request_data = request.POST
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            request_data = request.POST
 
-        text_for_translate = request_data['text_for_translate']
-        language_to = request_data['languages']
+            text_for_translate = request_data['text_for_translate']
+            language_to = request_data['languages']
 
-        translated_text, translate_from, translate_to = get_translate_text(language_to, text_for_translate)
+            translated_text, translate_from, translate_to = get_translate_text(language_to, text_for_translate)
 
-        translate_object = create_translate_object(text_for_translate, translate_from, translated_text, translate_to)
+            translate_object = create_translate_object(
+                text_for_translate,
+                translate_from,
+                translated_text,
+                translate_to,
+                request,
+            )
 
-        language_input = language.language.get(translate_from)
-        language_output = language.language.get(translate_to)
-        translate_data_to_render = {
-            'language_input': language_input,
-            'text_for_translate': text_for_translate,
-            'translate_object': translate_object,
-            'translated_text': translated_text,
-            'language_output': language_output,
-        }
+            language_input = language.language.get(translate_from)
+            language_output = language.language.get(translate_to)
+            translate_data_to_render = {
+                'language_input': language_input,
+                'text_for_translate': text_for_translate,
+                'translate_object': translate_object,
+                'translated_text': translated_text,
+                'language_output': language_output,
+            }
+        else:
+            translate_data_to_render = {}
     else:
-        translate_data_to_render = {}
-    return render(request, 'lang/index.html', context=translate_data_to_render)
+        translate_data_to_render = {'message': Message.unauthorized}
+    return render(request, 'lang/main.html', context=translate_data_to_render)
 
 
 def register(request):
-    '''
-    Registration of service users
-    '''
+    """Register a new user."""
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -54,9 +64,7 @@ def register(request):
 
 
 def user_login(request):
-    '''
-    Service user logging
-    '''
+    """Login of service users."""
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
         if form.is_valid():
@@ -69,8 +77,6 @@ def user_login(request):
 
 
 def user_logout(request):
-    '''
-    Unlogging service users
-    '''
+    """Logs out user."""
     logout(request)
     return redirect('login')
