@@ -12,7 +12,7 @@ from lang.structures import language
 
 
 def get_translate_text(language_to: str, text_for_translate: str) -> tuple[str, str, str]:
-    """Get translated_text and language."""
+    """Получение переведенного текста и языка."""
     translate_to = language.translate.get(language_to, 'en')
     translator = Translator()
 
@@ -29,7 +29,7 @@ def create_translate_object(
     language_output: str,
     request: WSGIRequest,
 ) -> Translate:
-    """Create translated object."""
+    """Создание объекта перевода."""
     translate_object: Translate = Translate.objects.create()
 
     translate_object.author = request.user
@@ -56,7 +56,7 @@ def save_track(
     translate_object: Translate,
     file_number: str,
 ) -> None:  # noqa: E501
-    """Save track of the translated object."""
+    """Сохранение трека в БД."""
     track = record_track(text_to_record=text_to_record, language_record=language)
     getattr(translate_object, file_number).save(
         name=file_number,
@@ -71,7 +71,7 @@ def get_title_name(text_for_translate: str) -> str:
 
 
 def record_track(text_to_record: str, language_record: str) -> BytesIO:
-    """Record text to speak."""
+    """Запись трека."""
     file_to_record = BytesIO()
     tts = gTTS(text_to_record, lang=language_record)
     tts.write_to_fp(file_to_record)

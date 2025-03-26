@@ -11,6 +11,7 @@ Django = "^5.1.7"
 dotenv = "^0.9.9"
 googletrans = "4.0.0rc1"
 gTTS = "2.5.2"
+flake8 = "^7.1.2"
 
 
 [build-system]

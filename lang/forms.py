@@ -1,10 +1,16 @@
+"""Формы."""
+
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm,
+)
 from django.contrib.auth.models import User
 
 
-
 class UserLoginForm(AuthenticationForm):
+    """Форма авторизации."""
+
     username = forms.CharField(
         label='Имя пользователя',
         widget=forms.TextInput(attrs={'class': 'form-control',
@@ -20,6 +26,8 @@ class UserLoginForm(AuthenticationForm):
 
 
 class UserRegisterForm(UserCreationForm):
+    """Форма регистрации."""
+
     username = forms.CharField(label='Имя пользователя',
                                help_text='Максимум 150 символов',
                                widget=forms.TextInput(
@@ -46,5 +54,7 @@ class UserRegisterForm(UserCreationForm):
                              )
 
     class Meta:
+        """Настройки мета-класса."""
+
         model = User
         fields = ('username', 'email', 'password1', 'password2')
