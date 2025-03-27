@@ -1,4 +1,4 @@
-"""Translate модель."""
+"""Model."""
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -18,7 +18,15 @@ class Translate(models.Model):
     language_output = models.CharField(max_length=4, verbose_name='Language output', blank=True, null=True)
 
     def get_absolute_url(self):
-        return reverse('translate', kwargs={"pk": self.pk})
+        return reverse('translate', kwargs={'pk': self.pk})
+
+    def get_file_1_name(self):
+        """Получение имени файла 1."""
+        return self.file_one.path.split('/')[-1]
+
+    def get_file_2_name(self):
+        """Получение имени файла 2."""
+        return self.file_two.path.split('/')[-1]
 
     def __str__(self):
         """Текстовое представление модели."""

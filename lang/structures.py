@@ -1,31 +1,22 @@
-"""Auxiliary structures."""
-
-from dataclasses import dataclass
+"""Вспомогательные структуры."""
 
 
-@dataclass
 class Language:
-    """Auxiliary structures."""
+    """Вспомогательные структуры."""
 
-    language: dict
-    translate: dict
-
-
-language = Language(
-    {
+    language = {
         'en': 'English',
         'de': 'Deutsch',
         'fr': 'Français',
         'ru': 'Русский',
         'uk': 'Українська',
         'pl': 'Polski',
-    },
-    {
+    }
+    translate = {
         'English': 'en',
         'Deutsch': 'de',
         'Français': 'fr',
         'Русский': 'ru',
         'Українська': 'uk',
         'Polski': 'pl',
-    },
-)
+    }

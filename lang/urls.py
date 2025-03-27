@@ -1,9 +1,18 @@
-"""urls language identifier."""
+"""urls."""
 
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .views import translate_text, user_login, user_logout, register, TranslatesView, TranslateView, DeleteTranslateView
+from .views import (
+    translate_text,
+    user_login,
+    user_logout,
+    register,
+    TranslatesView,
+    TranslateView,
+    DeleteTranslateView,
+    download_mp3, compare,
+)
 
 urlpatterns = [
     path('', translate_text, name='index'),
@@ -13,6 +22,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+    path('download_mp3/<path>/', download_mp3, name='download_mp3'),
+    path('compare/<int:pk>/', compare, name='compare'),
 ] + (
         static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) +
         static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,14 +1,16 @@
 {% extends 'lang/base.html' %}
 {% block content %}
-    {% if translates %}
-            {% for translate in translates %}
-                <div class="card-body">
-                    Дата перевода: {{ translate.created_at }} | 
-                    <a href="{{ translate.get_absolute_url }}">{{ translate.title }}</a>  
-                    <a href="{% url 'delete_translate' translate.pk %}" class="btn btn-danger"> Удалить </a>
-                </div>
-            {% endfor %}
-    {% else %}
-        {{ message }}
-    {% endif %}
+    <div class="inner">
+        {% if translates %}
+                {% for translate in translates %}
+                    <div class="card-body">
+                        Дата перевода: {{ translate.created_at|date:"Y-m-d H:i:s" }} |
+                        <a href="{{ translate.get_absolute_url }}">{{ translate.title }}</a>  
+                        <a href="{% url 'delete_translate' translate.pk %}" class="btn btn-danger"> Удалить </a>
+                    </div>
+                {% endfor %}
+        {% else %}
+            {{ message }}
+        {% endif %}
+    </div>
 {% endblock %}

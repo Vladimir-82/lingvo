@@ -1,4 +1,4 @@
-"""Views language identifier."""
+"""Views."""
 
 from django.contrib import messages
 from django.contrib.auth import (
@@ -6,7 +6,6 @@ from django.contrib.auth import (
     login,
 )
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse
 from django.shortcuts import (
     render,
     redirect,
@@ -17,14 +16,19 @@ from django.views.generic import (
     DeleteView,
 )
 
+import os
+from django.http import HttpResponse, Http404
+
+from compare import get_document
+from exceptions import LimitReportException
 from .forms import (
     UserLoginForm,
     UserRegisterForm,
 )
 from .messanges import Message
 from .models import Translate
+from .structures import Language
 
-from .structures import language
 from .utils import (
     create_translate_object,
     get_translate_text,
@@ -38,7 +42,10 @@ class TranslatesView(View):
         """Получить переводы."""
         translates = Translate.objects.filter(author=request.user).select_related('author')
         context = {}
-        context['translates'] = translates
+        if translates:
+            context['translates'] = translates
+        else:
+            context['message'] = Message.no_translates
         return render(request, 'lang/translates.html', context=context)
 
 
@@ -76,8 +83,8 @@ def translate_text(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
                 request,
             )
 
-            language_input = language.language.get(language_input)
-            language_output = language.language.get(language_output)
+            language_input = Language.language.get(language_input)
+            language_output = Language.language.get(language_output)
             translate_data_to_render = {
                 'language_input': language_input,
                 'text_for_translate': text_for_translate,
@@ -125,3 +132,27 @@ def user_logout(request):
     """Разлогирование."""
     logout(request)
     return redirect('login')
+
+
+def download_mp3(request, path):
+    """Скачивание mp3 файла."""
+    file_path = os.path.join('media', path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
+def compare(request, *args, **kwargs):
+    """Скачивание docx файла для сравнения текста и перевода."""
+    translate_id = kwargs.get('pk')
+    try:
+        document, file_name = get_document(translate_id)
+    except LimitReportException:
+        raise Http404
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = f'attachment; filename={file_name}.docx'
+    document.save(response)
+    return response

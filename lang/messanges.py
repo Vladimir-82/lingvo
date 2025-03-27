@@ -9,3 +9,4 @@ class Message:
     )
     success_register = 'Вы успешно зарегистрировались'
     error_register = 'Ошибка регистрации'
+    no_translates = 'У вас пока нет ни одного перевода...'

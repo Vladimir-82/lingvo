@@ -1,4 +1,4 @@
-"""Auxiliary tools language identifier."""
+"""Вспомогательные действия."""
 
 from io import BytesIO
 
@@ -8,12 +8,12 @@ from googletrans import Translator
 from gtts import gTTS
 
 from lang.models import Translate
-from lang.structures import language
+from lang.structures import Language
 
 
 def get_translate_text(language_to: str, text_for_translate: str) -> tuple[str, str, str]:
     """Получение переведенного текста и языка."""
-    translate_to = language.translate.get(language_to, 'en')
+    translate_to = Language.translate.get(language_to, 'en')
     translator = Translator()
 
     translate_from = translator.detect(text_for_translate).lang
