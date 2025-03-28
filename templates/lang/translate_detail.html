@@ -6,7 +6,6 @@
                 <div class="h-100 p-5 bg-light border rounded-3">
                   Текс оригинал: <p class="card-text">{{ translate_item.translate_from_text}}</p>
                   Язык - оригинал: <p class="card-text">{{ translate_item.language_input}}</p>
-{#                  Скачать Аудио-файл оригинала: <a href="{% url 'download_mp3' translate_item.file_one %}" class="btn btn-success"> Скачать </a>#}
                   Скачать Аудио-файл оригинала: <a href="{% url 'download_mp3' translate_item.get_file_1_name %}" 
                                                    class="btn btn-success"> Скачать </a>  
                 </div>
@@ -22,7 +21,7 @@
         </div>
     </div><br>
     <div class="inner">
-        <a href="{% url 'compare' translate_item.pk %}" class="btn btn-secondary"> Сравнить </a><br><br>
+        <a href="{% url 'compare' translate_item.pk %}" class="btn btn-secondary"> В Word </a><br><br>
         <a href="{% url 'delete_translate' translate_item.pk %}" class="btn btn-danger"> Удалить </a>
     </div>
     

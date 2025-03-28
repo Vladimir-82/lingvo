@@ -2,6 +2,7 @@
 
 from docx import Document
 
+from exceptions import NameErrorException
 from lang.models import Translate
 from lang.structures import Language
 
@@ -44,4 +45,8 @@ def get_translate(translate_id: int) -> dict[str, str]:
 
 def get_file_name(translate_data: dict[str, str]) -> str:
     """Получение имени файла отчета."""
-    return translate_data.get('translate_from_text')[:15]
+    try:
+        name = translate_data.get('translate_from_text')[:15]
+    except TypeError:
+        raise NameErrorException('Невозможно создать имя для переода.')
+    return name

@@ -19,7 +19,7 @@ from django.views.generic import (
 import os
 from django.http import HttpResponse, Http404
 
-from compare import get_document
+from lang.compare import get_document
 from exceptions import LimitReportException
 from .forms import (
     UserLoginForm,
@@ -29,9 +29,9 @@ from .messanges import Message
 from .models import Translate
 from .structures import Language
 
-from .utils import (
+from .translate import (
     create_translate_object,
-    get_translate_text,
+    get_translate_data,
 )
 
 
@@ -73,7 +73,7 @@ def translate_text(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
             text_for_translate = request_data['text_for_translate']
             language_to = request_data['languages']
 
-            translated_text, language_input, language_output = get_translate_text(language_to, text_for_translate)
+            translated_text, language_input, language_output = get_translate_data(language_to, text_for_translate)
 
             translate_object = create_translate_object(
                 text_for_translate,
@@ -150,7 +150,7 @@ def compare(request, *args, **kwargs):
     translate_id = kwargs.get('pk')
     try:
         document, file_name = get_document(translate_id)
-    except LimitReportException:
+    except LimitReportException():
         raise Http404
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={file_name}.docx'

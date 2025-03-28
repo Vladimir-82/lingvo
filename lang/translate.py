@@ -1,4 +1,4 @@
-"""Вспомогательные действия."""
+"""Перевод и определение языка текста."""
 
 from io import BytesIO
 
@@ -7,19 +7,21 @@ from django.core.handlers.wsgi import WSGIRequest
 from googletrans import Translator
 from gtts import gTTS
 
+from exceptions import TranslateErrorException, NameErrorException
 from lang.models import Translate
 from lang.structures import Language
 
 
-def get_translate_text(language_to: str, text_for_translate: str) -> tuple[str, str, str]:
+def get_translate_data(language_to: str, text_for_translate: str) -> tuple[str, str, str]:
     """Получение переведенного текста и языка."""
-    translate_to = Language.translate.get(language_to, 'en')
+    language_output = Language.translate.get(language_to, 'en')
     translator = Translator()
-
-    translate_from = translator.detect(text_for_translate).lang
-    translated = translator.translate(text_for_translate, dest=translate_to)
-
-    return translated.text, translate_from, translate_to
+    try:
+        language_input = translator.detect(text_for_translate).lang
+    except ValueError:
+        raise TranslateErrorException('Невозможно определить язык исходного текста')
+    translated = translator.translate(text_for_translate, dest=language_output)
+    return translated.text, language_input, language_output
 
 
 def create_translate_object(
@@ -67,12 +69,19 @@ def save_track(
 
 def get_title_name(text_for_translate: str) -> str:
     """Получение названия перевода."""
-    return ''.join((text_for_translate[:40], '...')) if len(text_for_translate) > 40 else text_for_translate
+    try:
+        name = ''.join((text_for_translate[:40], '...')) if len(text_for_translate) > 40 else text_for_translate
+    except TypeError:
+        raise NameErrorException('Невозможно создать имя для переода.')
+    return name
 
 
 def record_track(text_to_record: str, language_record: str) -> BytesIO:
     """Запись трека."""
     file_to_record = BytesIO()
-    tts = gTTS(text_to_record, lang=language_record)
+    try:
+        tts = gTTS(text_to_record, lang=language_record)
+    except ValueError:
+        raise TranslateErrorException('Невозможно перевести текст.')
     tts.write_to_fp(file_to_record)
     return file_to_record
