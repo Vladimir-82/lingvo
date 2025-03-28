@@ -23,7 +23,11 @@ class Migration(migrations.Migration):
                 ('file_two', models.FileField(blank=True, upload_to='media', verbose_name='File to translate')),
                 ('translate_from_text', models.TextField(blank=True, verbose_name='Translate from text')),
                 ('translated_text', models.TextField(blank=True, verbose_name='Translated text')),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(
+                    null=True,
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to=settings.AUTH_USER_MODEL,
+                )),
             ],
         ),
     ]
