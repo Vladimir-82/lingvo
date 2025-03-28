@@ -1,5 +1,7 @@
 """Views."""
 
+import logging
+
 from django.contrib import messages
 from django.contrib.auth import (
     logout,
@@ -34,12 +36,15 @@ from .translate import (
     get_translate_data,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class TranslatesView(View):
     """Получение всех переводов пользователя."""
 
     def get(self, request):
         """Получить переводы."""
+        logger.info('Пользователь %s инициирует получение всех своих переводов' % request.user.username)
         translates = Translate.objects.filter(author=request.user).select_related('author')
         context = {}
         if translates:
@@ -64,9 +69,10 @@ class DeleteTranslateView(DeleteView):
     success_url = '/translates/'
 
 
-def translate_text(request: WSGIRequest) -> HttpResponse:  # noqa: WPS210
+def translate_text(request: WSGIRequest) -> HttpResponse:
     """Перевод текста."""
     if request.user.is_authenticated:
+        logger.info('Пользователь %s инициирует перевод текста' % request.user.username)
         if request.method == 'POST':
             request_data = request.POST
 
@@ -136,21 +142,25 @@ def user_logout(request):
 
 def download_mp3(request, path):
     """Скачивание mp3 файла."""
+    logger.info('Пользователь %s инициирует скачивание mp3 файла' % request.user.username)
     file_path = os.path.join('media', path)
     if os.path.exists(file_path):
         with open(file_path, 'rb') as file:
             response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
             return response
+    logger.exception('Ошибка при скачивании mp3 файла')
     raise Http404
 
 
 def compare(request, *args, **kwargs):
     """Скачивание docx файла для сравнения текста и перевода."""
+    logger.info('Пользователь %s инициирует скачивание сравнения перевода текста в Word' % request.user.username)
     translate_id = kwargs.get('pk')
     try:
         document, file_name = get_document(translate_id)
     except LimitReportException():
+        logger.exception('Ошибка при скачивании сравнения перевода текста в Word')
         raise Http404
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={file_name}.docx'
