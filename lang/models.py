@@ -30,4 +30,4 @@ class Translate(models.Model):
 
     def __str__(self):
         """Текстовое представление модели."""
-        return self.title
+        return self.title if self.title else ''
