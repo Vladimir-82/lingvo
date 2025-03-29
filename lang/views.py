@@ -1,36 +1,54 @@
 """Views."""
 
 import logging
-
-from django.contrib import messages
-from django.contrib.auth import (
-    logout,
-    login,
-)
-from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import (
-    render,
-    redirect,
-)
-from django.views import View
-from django.views.generic import (
-    DetailView,
-    DeleteView,
-)
-
 import os
-from django.http import HttpResponse, Http404
 
-from lang.compare import get_document
-from exceptions import LimitReportException
+from django.contrib import (
+    messages,
+)
+from django.contrib.auth import (
+    login,
+    logout,
+)
+from django.core.handlers.wsgi import (
+    WSGIRequest,
+)
+from django.http import (
+    Http404,
+    HttpResponse,
+)
+from django.shortcuts import (
+    redirect,
+    render,
+)
+from django.views import (
+    View,
+)
+from django.views.generic import (
+    DeleteView,
+    DetailView,
+)
+
+from exceptions import (
+    LimitReportException,
+)
+from lang.compare import (
+    get_document,
+)
+
 from .forms import (
     UserLoginForm,
     UserRegisterForm,
 )
-from .messanges import Message
-from .models import Translate
-from .structures import Language
-
+from .messanges import (
+    Message,
+)
+from .models import (
+    Translate,
+)
+from .structures import (
+    Language,
+)
 from .translate import (
     create_translate_object,
     get_translate_data,

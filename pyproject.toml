@@ -15,8 +15,8 @@ flake8 = "^7.1.2"
 python-docx = "^1.1.2"
 pytest = "^8.3.5"
 pytest-django = "^4.10.0"
-ruff = "^0.11.2"
 psycopg2-binary = "^2.9.10"
+isort = "^6.0.1"
 
 
 [build-system]
@@ -25,3 +25,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "lingvo.settings"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 1

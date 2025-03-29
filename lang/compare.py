@@ -1,10 +1,18 @@
 """Сравнение оригинального текста и перевода."""
 
-from docx import Document
+from docx import (
+    Document,
+)
 
-from exceptions import NameErrorException
-from lang.models import Translate
-from lang.structures import Language
+from exceptions import (
+    NameErrorException,
+)
+from lang.models import (
+    Translate,
+)
+from lang.structures import (
+    Language,
+)
 
 
 def get_document(translate_id: int) -> tuple[Document, str]:

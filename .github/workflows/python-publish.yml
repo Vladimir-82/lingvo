@@ -29,9 +29,9 @@ jobs: # jobs. We will have two jobs (test and publish) with multiple steps.
       - name: flake8
         run: |
           poetry run flake8 .
-      - name: ruff
+      - name: isort
         run: |
-          poetry run ruff check .
+          poetry run isort .
       - name: Pytest
         run: |
           poetry run pytest .

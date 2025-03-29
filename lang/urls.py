@@ -1,17 +1,25 @@
 """urls."""
 
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import path
+from django.conf import (
+    settings,
+)
+from django.conf.urls.static import (
+    static,
+)
+from django.urls import (
+    path,
+)
+
 from .views import (
+    DeleteTranslateView,
+    TranslatesView,
+    TranslateView,
+    compare,
+    download_mp3,
+    register,
     translate_text,
     user_login,
     user_logout,
-    register,
-    TranslatesView,
-    TranslateView,
-    DeleteTranslateView,
-    download_mp3, compare,
 )
 
 urlpatterns = [
@@ -25,6 +33,6 @@ urlpatterns = [
     path('download_mp3/<path>/', download_mp3, name='download_mp3'),
     path('compare/<int:pk>/', compare, name='compare'),
 ] + (
-        static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) +
-        static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

@@ -1,8 +1,12 @@
 """Админка переводчика."""
 
-from django.contrib import admin
+from django.contrib import (
+    admin,
+)
 
-from .models import Translate
+from .models import (
+    Translate,
+)
 
 
 @admin.register(Translate)

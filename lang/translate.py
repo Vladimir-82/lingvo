@@ -1,15 +1,32 @@
 """Перевод и определение языка текста."""
 
-from io import BytesIO
+from io import (
+    BytesIO,
+)
 
-from django.core.files.base import ContentFile
-from django.core.handlers.wsgi import WSGIRequest
-from googletrans import Translator
-from gtts import gTTS
+from django.core.files.base import (
+    ContentFile,
+)
+from django.core.handlers.wsgi import (
+    WSGIRequest,
+)
+from googletrans import (
+    Translator,
+)
+from gtts import (
+    gTTS,
+)
 
-from exceptions import TranslateErrorException, NameErrorException
-from lang.models import Translate
-from lang.structures import Language
+from exceptions import (
+    NameErrorException,
+    TranslateErrorException,
+)
+from lang.models import (
+    Translate,
+)
+from lang.structures import (
+    Language,
+)
 
 
 def get_translate_data(language_to: str, text_for_translate: str) -> tuple[str, str, str]:

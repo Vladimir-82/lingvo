@@ -4,7 +4,9 @@ import datetime
 
 import pytest
 
-from lang.models import Translate
+from lang.models import (
+    Translate,
+)
 
 
 @pytest.fixture

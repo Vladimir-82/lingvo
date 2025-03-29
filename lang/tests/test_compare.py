@@ -1,13 +1,17 @@
 """Тестирование функций выгрузки текстов в Word и их сравнение."""
 
-from unittest import mock
+from unittest import (
+    mock,
+)
 
 import pytest
 
-from lang import compare
+from lang import (
+    compare,
+)
 from lang.compare import (
-    get_translate,
     get_file_name,
+    get_translate,
 )
 
 

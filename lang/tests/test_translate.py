@@ -1,10 +1,16 @@
 """Тестирование функций определения языка текста и перевод."""
 
-from io import BytesIO
+from io import (
+    BytesIO,
+)
 
 import pytest
 
-from lang.translate import get_translate_data, get_title_name, record_track
+from lang.translate import (
+    get_title_name,
+    get_translate_data,
+    record_track,
+)
 
 
 @pytest.mark.parametrize(
