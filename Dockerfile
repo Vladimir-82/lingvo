@@ -1,21 +1,19 @@
-# Pull base image
 FROM python:3.10.12
 
-# Set environment variables
-ENV PIP_DISABLE_PIP_VERSION_CHECK 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+WORKDIR /app
 
-# Set work directory
-WORKDIR /code
+# Установка Poetry
+RUN pip install poetry==1.2.0
 
-# Install dependencies
-COPY pyproject.toml .
-
-
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+# Копируем файлы зависимостей
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev
 
-# Copy project
+# Устанавливаем зависимости (без виртуальной среды)
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi
+
+# Копируем остальные файлы
 COPY . .
+
+# Команда для запуска
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
