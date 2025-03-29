@@ -15,7 +15,6 @@ flake8 = "^7.1.2"
 python-docx = "^1.1.2"
 pytest = "^8.3.5"
 pytest-django = "^4.10.0"
-mixer = "^7.2.2"
 ruff = "^0.11.2"
 psycopg2-binary = "^2.9.10"
 

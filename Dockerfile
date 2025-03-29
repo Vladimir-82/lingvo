@@ -3,7 +3,7 @@ FROM python:3.10.12
 WORKDIR /app
 
 # Установка Poetry
-RUN pip install poetry==1.2.0
+RUN pip install poetry==1.7.0
 
 # Копируем файлы зависимостей
 COPY pyproject.toml poetry.lock ./

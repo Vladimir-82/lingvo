@@ -1,21 +1,26 @@
 """Тестирование функций выгрузки текстов в Word и их сравнение."""
 
+from unittest import mock
+
 import pytest
 
-from lang.compare import get_translate, get_file_name
-
-pytestmark = pytest.mark.django_db
+from lang import compare
+from lang.compare import (
+    get_translate,
+    get_file_name,
+)
 
 
 def test_get_translate(translate):
     """Тестирование функции get_translate."""
-    result = get_translate(translate_id=translate.id)
+    with mock.patch.object(compare, 'get_translate_instance', return_value=translate):
+        result = get_translate(translate_id=translate.id)
 
-    assert result.get('language_input') == translate.language_input
-    assert result.get('language_output') == translate.language_output
-    assert result.get('translate_from_text') == translate.translate_from_text
-    assert result.get('translated_text') == translate.translated_text
-    assert result.get('date') == translate.created_at.strftime('%d.%m.%Y %H:%M')
+        assert result.get('language_input') == translate.language_input
+        assert result.get('language_output') == translate.language_output
+        assert result.get('translate_from_text') == translate.translate_from_text
+        assert result.get('translated_text') == translate.translated_text
+        assert result.get('date') == translate.created_at.strftime('%d.%m.%Y %H:%M')
 
 
 @pytest.mark.parametrize(

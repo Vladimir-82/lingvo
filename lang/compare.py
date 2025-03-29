@@ -32,7 +32,7 @@ def get_document(translate_id: int) -> tuple[Document, str]:
 
 def get_translate(translate_id: int) -> dict[str, str]:
     """Получение перевода для сравнения."""
-    translate = Translate.objects.get(id=translate_id)
+    translate = get_translate_instance(translate_id)
     translate_data = {
         'language_input': translate.language_input,
         'language_output': translate.language_output,
@@ -41,6 +41,11 @@ def get_translate(translate_id: int) -> dict[str, str]:
         'date': translate.created_at.strftime('%d.%m.%Y %H:%M'),
     }
     return translate_data
+
+
+def get_translate_instance(translate_id: int) -> Translate:
+    """Получение объекта перевода."""
+    return Translate.objects.get(id=translate_id)
 
 
 def get_file_name(translate_data: dict[str, str]) -> str:
