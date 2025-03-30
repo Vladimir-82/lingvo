@@ -21,3 +21,25 @@
 ```bash
 poetry run pytest
 ```
+
+## Makefile
+
+Отключить pre-commit
+```bash
+make pre-commit_off
+```
+
+Включить pre-commit
+```bash
+make pre-commit_on
+```
+
+Проверить проект flake8
+```bash
+make lint
+```
+
+Сортировка всех импортов
+```bash
+make isort
+```
