@@ -24,6 +24,10 @@ class Translate(models.Model):
     language_input = models.CharField(max_length=4, verbose_name='Language input', blank=True, null=True)
     language_output = models.CharField(max_length=4, verbose_name='Language output', blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Перевод'
+        verbose_name_plural = 'Переводы'
+
     def get_absolute_url(self):
         return reverse('translate', kwargs={'pk': self.pk})
 
@@ -38,3 +42,5 @@ class Translate(models.Model):
     def __str__(self):
         """Текстовое представление модели."""
         return self.title if self.title else ''
+
+
