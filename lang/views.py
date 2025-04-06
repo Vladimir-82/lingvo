@@ -21,13 +21,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
-from django.views import (
-    View,
-)
-from django.views.generic import (
-    DeleteView,
-    DetailView,
-)
+from django.views.generic import DeleteView
 
 from exceptions import (
     LimitReportException,
@@ -57,26 +51,30 @@ from .translate import (
 logger = logging.getLogger(__name__)
 
 
-class TranslatesView(View):
+def translates(request):
     """Получение всех переводов пользователя."""
-
-    def get(self, request):
-        """Получить переводы."""
-        logger.info('Пользователь %s инициирует получение всех своих переводов' % request.user.username)
-        translates = Translate.objects.filter(author=request.user).select_related('author')
-        context = {}
-        if translates:
-            context['translates'] = translates
-        else:
-            context['message'] = Message.no_translates
-        return render(request, 'lang/translates.html', context=context)
+    logger.info('Пользователь %s инициирует получение всех своих переводов' % request.user.username)
+    translates = Translate.objects.filter(author=request.user).select_related('author')
+    context = {}
+    if translates:
+        context['translates'] = translates
+    else:
+        context['message'] = Message.no_translates
+    return render(request, 'lang/translates.html', context=context)
 
 
-class TranslateView(DetailView):
-    """Перевод пользователя."""
+def translate_detail(request, pk):
+    """Перевод пользователя.
 
-    model = Translate
-    context_object_name = 'translate_item'
+    Только для автора перевода.
+    """
+    try:
+        translate_item = Translate.objects.get(pk=pk)
+    except Translate.DoesNotExist:
+        raise Http404
+    if request.user == translate_item.author:
+        return render(request, 'lang/translate_detail.html', {"translate_item": translate_item})
+    raise Http404
 
 
 class DeleteTranslateView(DeleteView):
@@ -158,29 +156,52 @@ def user_logout(request):
     return redirect('login')
 
 
-def download_mp3(request, path):
-    """Скачивание mp3 файла."""
+def download_mp3(request, *args, **kwargs):
+    """Скачивание mp3 файла.
+
+    Только для автора перевода.
+    """
+    translate_id = kwargs.get('pk')
+    file = kwargs.get('file')
     logger.info('Пользователь %s инициирует скачивание mp3 файла' % request.user.username)
-    file_path = os.path.join('media', path)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as file:
-            response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
+    try:
+        translate = Translate.objects.get(pk=translate_id)
+    except Translate.DoesNotExist:
+        logger.exception('Ошибка при скачивании mp3 файла')
+        raise Http404
+    if translate.author == request.user:
+        path = translate.get_file_1_name() if file == 'file_1' else translate.get_file_2_name()
+        file_path = os.path.join('media', path)
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as file:
+                response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                return response
     logger.exception('Ошибка при скачивании mp3 файла')
     raise Http404
 
 
 def compare(request, *args, **kwargs):
-    """Скачивание docx файла для сравнения текста и перевода."""
+    """Скачивание docx файла для сравнения текста и перевода.
+
+    Только для автора перевода.
+    """
     logger.info('Пользователь %s инициирует скачивание сравнения перевода текста в Word' % request.user.username)
     translate_id = kwargs.get('pk')
     try:
-        document, file_name = get_document(translate_id)
-    except LimitReportException():
+        translate = Translate.objects.get(pk=translate_id)
+    except Translate.DoesNotExist:
         logger.exception('Ошибка при скачивании сравнения перевода текста в Word')
         raise Http404
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = f'attachment; filename={file_name}.docx'
-    document.save(response)
-    return response
+    if translate.author == request.user:
+        try:
+            document, file_name = get_document(translate_id)
+        except LimitReportException():
+            logger.exception('Ошибка при скачивании сравнения перевода текста в Word')
+            raise Http404
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = f'attachment; filename={file_name}.docx'
+        document.save(response)
+        return response
+    logger.exception('Ошибка при скачивании сравнения перевода текста в Word')
+    raise Http404
